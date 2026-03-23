@@ -6,3 +6,4 @@ prisma
 /src/generated/prisma
 
 /generated/prisma
+.env
