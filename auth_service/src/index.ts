@@ -1,26 +1,20 @@
+import app from "./app";
 import { prisma } from "../lib/prisma";
+import dotenv from "dotenv";
+dotenv.config();
+const PORT = process.env.PORT || 5001;
 
-async function main() {
-  // Create a user with a post in one query
-  const user = await prisma.authUser.create({
-    data: {
-      email: "alice@example.com",
-      password: "12121",
-      role: "USER",
-    },
-  });
+const checkDB = async () => {
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    console.log("✅ DB is reachable and working");
+  } catch (err) {
+    console.error("❌ DB query failed:", err);
+  }
+};
 
-  console.log("Created:", user);
+checkDB();
 
-  // Fetch all users with their posts
-  const all = await prisma.authUser.findMany({});
-  console.log("All users:", JSON.stringify(all, null, 2));
-}
-
-main()
-  .then(() => prisma.$disconnect())
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+app.listen(PORT, () => {
+  console.log(`Auth Service running on port ${PORT}`);
+});
