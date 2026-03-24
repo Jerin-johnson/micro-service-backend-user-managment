@@ -15,4 +15,4 @@ connectDB();
 
 mongoose.connect(process.env.MONGO_URI).then(() => console.log("DB Connected"));
 
-app.listen(3000, () => console.log("User Service Running"));
+app.listen(5002, () => console.log("User Service Running"));

@@ -11,7 +11,7 @@ export const validRegisterRequest = (
     if (!email || !password || !role) throw new Error("Provide valid details");
     next();
   } catch (err: unknown) {
-    res.status(400).json({ message: err?.message });
+    res.status(400).json({ message: err });
   }
 };
 
@@ -25,7 +25,8 @@ export const validLoginRequest = (
 
     if (!email || !password) throw new Error("Provide valid details");
     next();
-  } catch (err: unknown) {
-    res.status(400).json({ message: err?.message });
+  } catch (err: any) {
+    // res.status(400).json({ message: err?.message });
+    res.status(400).json({ message: "something went wrongs" });
   }
 };
