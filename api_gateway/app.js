@@ -13,12 +13,11 @@ app.get("/health", (req, res) => {
 });
 app.use(cookieParser());
 
-// ── Middleware order matters ───────────────────────────────────────────────
-app.use(express.json()); // 1. Parse request body
-app.use(requestLogger); // 2. Log every request (before any rejection)
-app.use(globalRateLimiter); // 3. Drop excessive traffic early
-app.use(authenticate); // 4. Verify JWT, inject x-user-* headers
-app.use(router); // 5. Proxy to the right service
+app.use(express.json()); //  Parse request body
+app.use(requestLogger); //  Log every request (before any rejection)
+app.use(globalRateLimiter); //  Drop excessive traffic early
+app.use(authenticate); //  Verify JWT, inject x-user-* headers
+app.use(router); //  Proxy to the right service
 
 // ── Global error handler ──────────────────────────────────────────────────
 app.use((err, req, res, next) => {
