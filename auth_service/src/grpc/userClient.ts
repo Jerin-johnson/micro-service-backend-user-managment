@@ -34,7 +34,7 @@ class UserGrpcClient {
   }
 
   async createUser(request: {
-    authUserId: number;
+    auth_user_id: number;
     email: string;
     name: string;
     role: string;

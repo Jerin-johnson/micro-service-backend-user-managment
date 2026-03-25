@@ -27,7 +27,10 @@ export const createUser = async (data) => {
   // Check if user already exists
   const existingUser = await findOneByEmail(email);
   if (existingUser) {
-    throw new Error("User already exists in User Service");
+    return {
+      success: true,
+      userId: existing.id,
+    };
   }
 
   const newUser = new User({

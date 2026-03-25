@@ -37,6 +37,8 @@ const authenticate = (req, res, next) => {
     // ✅ Remove sensitive token
     delete req.headers["authorization"];
 
+    console.log("The req user is api gateway", req.user);
+
     next();
   } catch (err) {
     if (err.name === "TokenExpiredError") {

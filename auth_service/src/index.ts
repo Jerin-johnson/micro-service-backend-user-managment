@@ -9,7 +9,7 @@ const checkDB = async () => {
     await prisma.$queryRaw`SELECT 1`;
     console.log("✅ DB is reachable and working");
   } catch (err) {
-    console.error("❌ DB query failed:", err);
+    console.error(" DB query failed:", err);
   }
 };
 

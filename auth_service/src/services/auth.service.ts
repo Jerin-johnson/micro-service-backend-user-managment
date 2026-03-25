@@ -27,11 +27,13 @@ export const registerUser = async (
     role,
   });
 
+  console.log("The auth user is", authUser);
+
   let userServiceId: number | null = null;
 
   try {
     const grpcRes = await userGrpcClient.createUser({
-      authUserId: authUser.id,
+      auth_user_id: authUser.id,
       email: authUser.email,
       name,
       role: authUser.role,

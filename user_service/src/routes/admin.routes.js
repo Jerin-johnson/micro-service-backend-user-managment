@@ -1,11 +1,11 @@
 import express from "express";
 import * as adminController from "../controllers/admin.controller.js";
-import { attachUser } from "../middlewares/auth.middleware.js";
+import { autheticate } from "../middlewares/auth.middleware.js";
 import { allowRoles } from "../middlewares/role.middleware.js";
 
 const router = express.Router();
 
-router.use(attachUser, allowRoles("ADMIN"));
+router.use(autheticate, allowRoles("ADMIN"));
 
 router.get("/users", adminController.getUsers);
 router.get("/users/:id", adminController.getUser);
