@@ -45,6 +45,11 @@ router.use(
 // ── User Service (/api/users/*) ───────────────────────────────────────────
 // Any authenticated user can access
 router.use("/api/user", createProxy(services.user.url, "/api/user"));
+router.use(
+  "/api/admin",
+  authorize("admin"),
+  createProxy(services.user.url, "/api/admin"),
+);
 
 // ── Reporting Service (/api/reports/*) ────────────────────────────────────
 // Only admins and analysts — role guard runs before the proxy

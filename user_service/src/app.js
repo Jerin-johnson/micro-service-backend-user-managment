@@ -1,9 +1,9 @@
 import express from "express";
-import mongoose from "mongoose";
 import userRoutes from "./routes/user.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import { connectDB } from "./configs/mongoose.connect.js";
 import startGrpcServer from "./grpc/server.js";
+import { rabbitMQProducer } from "./utils/producer.js";
 
 const app = express();
 
@@ -19,9 +19,16 @@ app.use("/api/admin", adminRoutes);
 
 connectDB();
 
-mongoose.connect(process.env.MONGO_URI).then(() => console.log("DB Connected"));
+const shutdown = async () => {
+  console.log("shutdowing queue service");
+  await rabbitMQProducer.close();
+  process.exit(0);
+};
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
 
-app.listen(5002, () => {
+app.listen(5002, async () => {
   console.log("The User service is running on the port 5002");
+  await rabbitMQProducer.connect();
   startGrpcServer();
 });

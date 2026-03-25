@@ -77,6 +77,10 @@ export const loginUser = async (email: string, password: string) => {
     throw new Error("User not found");
   }
 
+  if (!user.isActive) {
+    throw new Error("You're blocked by admin");
+  }
+
   const isMatch = await bcrypt.compare(password, user.password);
 
   if (!isMatch) {

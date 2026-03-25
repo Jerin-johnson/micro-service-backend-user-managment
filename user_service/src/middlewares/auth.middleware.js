@@ -19,9 +19,9 @@ export const autheticate = (req, res, next) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    console.log("The req user is", req.user);
-
     req.user = { email, id, role };
+
+    console.log("The req user is", req.user);
 
     next();
   } catch (err) {

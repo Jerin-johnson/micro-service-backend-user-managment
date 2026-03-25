@@ -1,6 +1,7 @@
 import app from "./app";
 import { prisma } from "../lib/prisma";
 import dotenv from "dotenv";
+import { connectConsumer } from "./utils/user.event.consumer";
 dotenv.config();
 const PORT = process.env.PORT || 5001;
 
@@ -15,6 +16,7 @@ const checkDB = async () => {
 
 checkDB();
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+  await connectConsumer();
   console.log(`Auth Service running on port ${PORT}`);
 });

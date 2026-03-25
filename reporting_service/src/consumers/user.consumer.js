@@ -7,7 +7,7 @@ dotenv.config();
 
 const RABBITMQ_URL = process.env.RABBITMQ_URL;
 const EXCHANGE = "user_events";
-const ROUTING_KEY = "user.created";
+// const ROUTING_KEY = "user.created";
 const QUEUE_NAME = process.env.QUEUE_NAME || "user_report_queue";
 
 let connection = null;
@@ -23,39 +23,78 @@ async function connectRabbitMQ() {
 
     // Assert queue and bind it to exchange with routing key
     await channel.assertQueue(QUEUE_NAME, { durable: true });
-    await channel.bindQueue(QUEUE_NAME, EXCHANGE, ROUTING_KEY);
+    const routingKeys = [
+      "user.created",
+      "user.updated",
+      "user.deactivated",
+      "user.deleted",
+    ];
 
-    console.log(`✅ Reporting Service listening for ${ROUTING_KEY} events...`);
+    for (const key of routingKeys) {
+      await channel.bindQueue(QUEUE_NAME, EXCHANGE, key);
+      console.log(`📌 Bound routing key: ${key} → queue: ${QUEUE_NAME}`);
+    }
 
-    // Consume messages
+    console.log(
+      "✅ Reporting Service Consumer started - listening to all user events",
+    );
+
+    console.log(`✅ Reporting Service listening for ${routingKeys} events...`);
+
     channel.consume(QUEUE_NAME, async (msg) => {
-      if (msg) {
-        try {
-          const content = JSON.parse(msg.content.toString());
-          console.log("📥 Received event:", content);
+      if (!msg) return;
 
-          const { data } = content;
+      try {
+        const content = JSON.parse(msg.content.toString());
+        const { event, data } = content;
 
-          // Save to reporting database
-          const report = new UserReport({
-            authUserId: data.authUserId,
-            // userId: data.userId,
-            email: data.email,
-            name: data.name,
-            role: data.role,
-          });
+        console.log(`📥 Reporting received: ${event}`);
 
-          await report.save();
+        switch (event) {
+          case "user.created":
+            const report = new UserReport({
+              authUserId: data.authUserId,
+              // userId: data.userId,
+              email: data.email,
+              name: data.name,
+              role: data.role,
+            });
 
-          console.log(`✅ User report saved for ${data.email}`);
+            await report.save();
+            console.log(`✅ User report saved for ${data.email}`);
+            break;
+          case "user.updated":
+            await UserReport.findOneAndUpdate(
+              { authUserId: data.authUserId },
+              {
+                email: data.email,
+                name: data.name,
+                role: data.role,
+                isActive: data.isActive !== undefined ? data.isActive : true,
+              },
+              { upsert: true, new: true },
+            );
+            break;
 
-          // Acknowledge the message (important!)
-          channel.ack(msg);
-        } catch (error) {
-          console.error("❌ Error processing message:", error);
-          // Reject message and requeue (or send to dead letter queue later)
-          channel.nack(msg, false, true); // requeue = true
+          case "user.deactivated":
+            await UserReport.findOneAndUpdate(
+              { authUserId: data.authUserId },
+              { isActive: data.isActive },
+            );
+            break;
+
+          case "user.deleted":
+            await UserReport.findOneAndUpdate(
+              { authUserId: data.authUserId },
+              { isActive: false },
+            );
+            break;
         }
+
+        channel.ack(msg);
+      } catch (error) {
+        console.error("Error in Reporting Consumer:", error);
+        channel.nack(msg, false, true);
       }
     });
   } catch (err) {

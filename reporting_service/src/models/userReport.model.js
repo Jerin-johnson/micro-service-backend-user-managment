@@ -24,6 +24,10 @@ const userReportSchema = new mongoose.Schema({
     enum: ["USER", "ADMIN"],
     required: true,
   },
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

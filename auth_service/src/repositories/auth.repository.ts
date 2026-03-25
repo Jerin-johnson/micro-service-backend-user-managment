@@ -19,3 +19,17 @@ export const createUser = async (data: {
 export const deleteUser = async (id: number) => {
   return prisma.authUser.delete({ where: { id } });
 };
+
+export const updateAuthUser = async (id: number, updateData: any) => {
+  return prisma.authUser.update({
+    where: { id },
+    data: updateData,
+  });
+};
+
+export const softDeleteAuthUser = async (id: number) => {
+  return prisma.authUser.update({
+    where: { id },
+    data: { isActive: false },
+  });
+};

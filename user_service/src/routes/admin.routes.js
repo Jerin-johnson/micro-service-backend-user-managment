@@ -10,6 +10,6 @@ router.use(autheticate, allowRoles("ADMIN"));
 router.get("/users", adminController.getUsers);
 router.get("/users/:id", adminController.getUser);
 router.put("/users/:id", adminController.updateUserByAdmin);
-router.delete("/users/:id", adminController.deleteUserByAdmin);
+router.patch("/users/:id", adminController.deleteUserByAdmin);
 
 export default router;

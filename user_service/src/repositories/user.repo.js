@@ -1,15 +1,19 @@
 import User from "../models/user.model.js";
 
-export const getAllUsers = async (query) => {
+export const getAllUsers = async (query, adminId) => {
   const { page = 1, limit = 10 } = query;
 
-  return await User.find()
+  console.log("The admin Id is ", adminId);
+
+  return await User.find({
+    authUserId: { $nin: [adminId] },
+  })
     .skip((page - 1) * limit)
     .limit(limit);
 };
 
 export const getUserById = async (id) => {
-  return await User.findById(id);
+  return await User.findOne({ authUserId: id });
 };
 
 export const updateUser = async (id, data) => {
