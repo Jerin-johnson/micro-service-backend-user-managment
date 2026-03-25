@@ -11,15 +11,26 @@ const createProxy = (target, pathPrefix) => {
     target,
     changeOrigin: true,
     // pathRewrite: { [`^${pathPrefix}`]: "" },
+    pathRewrite: (path, req) => {
+      return req.originalUrl; // send full path
+    },
     on: {
       proxyReq: (proxyReq, req) => {
-        console.log(`[Proxy] ${req.method} ${req.path} → ${target}`);
+        console.log(`[Proxy] ${req.method} ${req.url} → ${target}`);
+        if (req.body) {
+          const bodyData = JSON.stringify(req.body);
+          proxyReq.setHeader("Content-Type", "application/json");
+          proxyReq.setHeader("Content-Length", Buffer.byteLength(bodyData));
+          proxyReq.write(bodyData);
+        }
       },
       error: (err, req, res) => {
         console.error(`[Proxy Error] ${err.message}`);
         res.status(502).json({ error: "Upstream service unavailable" });
       },
     },
+    timeout: 5000,
+    proxyTimeout: 5000,
   });
 };
 
@@ -33,7 +44,7 @@ router.use(
 
 // ── User Service (/api/users/*) ───────────────────────────────────────────
 // Any authenticated user can access
-router.use("/api/users", createProxy(services.user.url, "/api/users"));
+router.use("/api/user", createProxy(services.user.url, "/api/user"));
 
 // ── Reporting Service (/api/reports/*) ────────────────────────────────────
 // Only admins and analysts — role guard runs before the proxy

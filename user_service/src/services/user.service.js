@@ -1,21 +1,48 @@
 import User from "../models/user.model.js";
+import { findOneByEmail } from "../repositories/user.repo.js";
 
-export const getAllUsers = async (query) => {
-  const { page = 1, limit = 10 } = query;
+export const createProfile = async (data) => {
+  // check if already exists (idempotent — safe to call twice)
+  const existing = await findByAuthId(data.authId);
+  if (existing) return existing;
 
-  return await User.find()
-    .skip((page - 1) * limit)
-    .limit(limit);
+  return repo.createUser({
+    authId: data.authId,
+    email: data.email,
+    role: data.role,
+  });
 };
 
-export const getUserById = async (id) => {
-  return await User.findById(id);
+export const getProfile = async (authId) => {
+  const user = await repo.findByAuthId(authId);
+  if (!user) throw new Error("Profile not found");
+  return user;
 };
 
-export const updateUser = async (id, data) => {
-  return await User.findByIdAndUpdate(id, data, { new: true });
-};
+export const createUser = async (data) => {
+  const { authUserId, email, name, role } = data;
 
-export const deleteUser = async (id) => {
-  return await User.findByIdAndDelete(id);
+  console.log("The data is ", data);
+
+  // Check if user already exists
+  const existingUser = await findOneByEmail(email);
+  if (existingUser) {
+    throw new Error("User already exists in User Service");
+  }
+
+  const newUser = new User({
+    authUserId,
+    email,
+    name,
+    role,
+  });
+
+  await newUser.save();
+
+  console.log(`User created in User Service with ID: ${newUser._id}`);
+
+  return {
+    userId: newUser._id, // MongoDB _id (ObjectId) converted to string later if needed
+    success: true,
+  };
 };

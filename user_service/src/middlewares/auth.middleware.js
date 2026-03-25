@@ -1,15 +1,26 @@
 import jwt from "jsonwebtoken";
 
-export const authMiddleware = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1];
-
-  if (!token) return res.status(401).json({ message: "Unauthorized" });
+export const attachUser = (req, res, next) => {
+  console.log("Headers:", req.headers);
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+    const email = req.headers["x-user-email"];
+    const id = req.headers["x-user-id"];
+
+    console.log("Email:", email);
+    console.log("ID:", id);
+
+    const isValid = email && id;
+    console.log("isValid:", isValid);
+
+    if (!isValid) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    req.user = { email, id };
+
     next();
-  } catch {
+  } catch (err) {
     res.status(401).json({ message: "Invalid token" });
   }
 };

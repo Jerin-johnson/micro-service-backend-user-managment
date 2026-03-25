@@ -3,9 +3,9 @@ import * as service from "../services/auth.service";
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { email, password, role } = req.body;
+    const { email, password, role, name } = req.body;
 
-    const data = await service.registerUser(email, password, role);
+    const data = await service.registerUser(email, password, role, name);
 
     res.cookie("token", data.token, {
       httpOnly: true,

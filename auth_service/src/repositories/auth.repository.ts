@@ -15,3 +15,7 @@ export const createUser = async (data: {
     data,
   });
 };
+
+export const deleteUser = async (id: number) => {
+  return prisma.authUser.delete({ where: { id } });
+};

@@ -24,9 +24,9 @@ const server = app.listen(PORT, () => {
 ├─────────────────────────────────────────┤
 │  http://localhost:${PORT}                   │
 │                                         │
-│  /api/auth    → auth_service :4001      │
-│  /api/users   → user_service :4002      │
-│  /api/reports → reporting_service :4003 │
+│  /api/auth    → auth_service :5001      │
+│  /api/users   → user_service :5002      │
+│  /api/reports → reporting_service :5003 │
 └─────────────────────────────────────────┘
   `);
 });

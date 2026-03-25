@@ -3,7 +3,7 @@
 echo ""
 echo "=== Starting Auth_app ==="
 cd auth_service || exit
-npm run start &
+npm run dev &
 cd ..
 
 echo ""

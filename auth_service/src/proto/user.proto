@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package user;
+
+service UserService {
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+}
+
+message CreateUserRequest {
+  int32 auth_user_id = 1;     // ID from AuthUser table
+  string email = 2;
+  string name = 3;
+  string role = 4;            // "USER" or "ADMIN"
+}
+
+message CreateUserResponse {
+  int32 user_id = 1;          // ID in User Service
+  bool success = 2;
+  string message = 3;
+}

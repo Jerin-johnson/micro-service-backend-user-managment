@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { allPublicPaths } = require("../config/services.config.js");
+const dotenv = require("dotenv").config();
 
 const authenticate = (req, res, next) => {
   // ✅ Check public routes
@@ -23,6 +24,8 @@ const authenticate = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    console.log("The decoded things is", decoded);
 
     req.user = decoded;
 
