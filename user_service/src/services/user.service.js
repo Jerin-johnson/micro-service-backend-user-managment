@@ -74,6 +74,7 @@ export const getUserByIdService = async (userId) => {
 export const userServicePlusEvent = {
   // Admin - Update user (name, role, isActive, etc.)
   updateUser: async (authUserId, updateData) => {
+    console.log("the updated data is", updateData);
     const updatedUser = await User.findOneAndUpdate(
       { authUserId },
       updateData,

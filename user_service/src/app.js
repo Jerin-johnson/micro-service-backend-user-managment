@@ -11,6 +11,8 @@ app.use(express.json());
 
 app.use((req, res, next) => {
   console.log("User Service Hit:", req.method, req.url);
+  console.log("req.body:", req.method, req.body);
+
   next();
 });
 

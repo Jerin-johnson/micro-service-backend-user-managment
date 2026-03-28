@@ -35,16 +35,8 @@ const ROUTING_KEYS = [
   "user.deleted",
 ] as const;
 
-// ============================================================================
-// STATE
-// ============================================================================
-
 let connection: ChannelModel | null = null;
 let channel: Channel | null = null;
-
-// ============================================================================
-// CONNECTION
-// ============================================================================
 
 export async function connectConsumer(): Promise<void> {
   try {
@@ -71,7 +63,7 @@ export async function connectConsumer(): Promise<void> {
     }
 
     console.log(
-      `✅ Auth Service Consumer started - listening for user events on queue: ${QUEUE_NAME}`,
+      ` Auth Service Consumer started - listening for user events on queue: ${QUEUE_NAME}`,
     );
 
     // Start consuming messages
@@ -92,10 +84,6 @@ export async function connectConsumer(): Promise<void> {
     reconnect();
   }
 }
-
-// ============================================================================
-// MESSAGE HANDLING
-// ============================================================================
 
 async function handleMessage(msg: ConsumeMessage | null): Promise<void> {
   if (!msg || !channel) return;
@@ -129,10 +117,6 @@ async function handleMessage(msg: ConsumeMessage | null): Promise<void> {
   }
 }
 
-// ============================================================================
-// EVENT HANDLERS
-// ============================================================================
-
 const eventHandlers: Record<string, EventHandler> = {
   "user.updated": handleUserUpdated,
   "user.deactivated": handleUserDeactivated,
@@ -161,10 +145,6 @@ async function handleUserDeleted(data: UserEventData): Promise<void> {
   console.log(`✅ User ${data.authUserId} deleted from Auth DB`);
 }
 
-// ============================================================================
-// RECONNECTION
-// ============================================================================
-
 function reconnect(): void {
   console.log("🔄 Attempting to reconnect in 5 seconds...");
   setTimeout(() => {
@@ -174,19 +154,15 @@ function reconnect(): void {
   }, 5000);
 }
 
-// ============================================================================
-// GRACEFUL SHUTDOWN
-// ============================================================================
-
 export async function disconnectConsumer(): Promise<void> {
   try {
     if (channel) {
       await channel.close();
-      console.log("✅ Channel closed");
+      console.log("Channel closed");
     }
     if (connection) {
       await connection.close();
-      console.log("✅ Connection closed");
+      console.log(" Connection closed");
     }
   } catch (error) {
     console.error("❌ Error during shutdown:", error);

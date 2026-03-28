@@ -34,8 +34,24 @@ export const login = async (req: Request, res: Response) => {
       sameSite: "none",
     });
 
-    res.json(data);
+    return res.json(data);
   } catch (err: any) {
+    console.log("err is", err);
+    return res.status(401).json({ message: err.message });
+  }
+};
+
+export const logout = async (req: Request, res: Response) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
+    return res.json({ message: "logout successfully" });
+  } catch (err: any) {
+    console.log("err is", err);
     res.status(401).json({ message: err.message });
   }
 };

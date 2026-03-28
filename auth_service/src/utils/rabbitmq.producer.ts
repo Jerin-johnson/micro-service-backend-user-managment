@@ -7,7 +7,7 @@ const RABBITMQ_URL = process.env.AMQP_URL as string;
 console.log("the url is ", RABBITMQ_URL);
 
 class RabbitMQProducer {
-  private connection: amqp.ChannelModel | null = null; // ← FIXED HERE
+  private connection: amqp.ChannelModel | null = null;
   private channel: amqp.Channel | null = null;
   private readonly exchange = "user_events";
   private reconnectTimer?: NodeJS.Timeout;

@@ -38,7 +38,7 @@ const createProxy = (target, pathPrefix) => {
 // Stricter rate limit here — login/register are public (whitelisted in auth middleware)
 router.use(
   "/api/auth",
-  authRateLimiter,
+  // authRateLimiter,
   createProxy(services.auth.url, "/api/auth"),
 );
 
