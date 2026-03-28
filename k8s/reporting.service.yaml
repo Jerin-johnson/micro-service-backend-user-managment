@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reporting-service
+  namespace: user-management
+
+spec:
+  replicas: 1 # ⚠️ start with 1 (important for queues)
+
+  selector:
+    matchLabels:
+      app: reporting-service
+
+  template:
+    metadata:
+      labels:
+        app: reporting-service
+
+    spec:
+      containers:
+        - name: reporting-service
+          image: jerinirowz/reporting-service:v1
+
+          ports:
+            - containerPort: 5003
+
+          env:
+            # Mongo connection
+            - name: MONGO_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: MONGO_URI_REPORT
+
+            # RabbitMQ (cloud)
+            - name: RABBITMQ_URL
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: AMQP_URL
+
+            - name: QUEUE_NAME
+              value: "user_report_queue"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reporting-service
+  namespace: user-management
+
+spec:
+  selector:
+    app: reporting-service
+
+  ports:
+    - port: 5003
+      targetPort: 5003
+
+  type: ClusterIP

@@ -13,6 +13,10 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", service: "auth_service" });
 });
 
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
+
 app.use("/api/auth", authRoutes);
 
 app.use((req, res, next) => {

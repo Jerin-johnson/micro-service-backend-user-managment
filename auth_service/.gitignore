@@ -8,3 +8,4 @@ prisma
 /generated/prisma
 .env
 dist
+.env.docker

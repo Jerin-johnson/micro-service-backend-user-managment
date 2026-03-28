@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway
+  namespace: user-management
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: api-gateway
+
+  template:
+    metadata:
+      labels:s
+        app: api-gateway
+
+    spec:
+      containers:
+        - name: api-gateway
+          image: jerinirowz/api-gateway:v1
+
+          ports:
+            - containerPort: 5000
+
+          env:
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: JWT_SECRET
+
+            - name: AUTH_SERVICE_URL
+              value: "http://auth-service:5001"
+
+            - name: USER_SERVICE_URL
+              value: "http://user-service:5002"
+
+            - name: REPORTING_SERVICE_URL
+              value: "http://reporting-service:5003"

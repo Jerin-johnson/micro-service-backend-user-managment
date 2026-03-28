@@ -22,7 +22,7 @@ app.use((req, res, next) => {
 
 // CORS Configuration - THIS MUST BE EARLY
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: ["http://localhost:3000", "http://mfe.local"],
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
